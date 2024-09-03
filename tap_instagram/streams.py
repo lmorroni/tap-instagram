@@ -743,7 +743,7 @@ class UserInsightsStream(InstagramStream):
     min_start_date: datetime = pendulum.now("UTC").subtract(years=2).add(days=1)
     max_end_date: datetime = pendulum.today("UTC").subtract(days=1)
     max_time_window: timedelta = pendulum.duration(days=30)
-    time_period: str  # TODO: Use an Enum type instead
+    time_period = "week"  # TODO: Use an Enum type instead
     metrics: List[str]
 
     # Optionally, you may also use `schema_filepath` in place of `schema`:
