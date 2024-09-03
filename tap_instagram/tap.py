@@ -34,7 +34,7 @@ STREAM_TYPES = [
     UsersStream,
 ]
 
-BASE_URL = "https://graph.facebook.com/{ig_user_id}"
+BASE_URL = "https://graph.facebook.com/v20.0/{ig_user_id}"
 
 session = requests.Session()
 
