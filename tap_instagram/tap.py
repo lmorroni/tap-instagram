@@ -18,9 +18,6 @@ from tap_instagram.streams import (
     UserInsightsOnlineFollowersStream,
     UserInsightsWeeklyStream,
     UsersStream,
-MediaInsightsLifetimeStream,
-UserInsightsFollowersStream,
-UserInsightsWeeklyStream
 )
 
 STREAM_TYPES = [
@@ -35,9 +32,6 @@ STREAM_TYPES = [
     UserInsightsOnlineFollowersStream,
     UserInsightsWeeklyStream,
     UsersStream,
-    MediaInsightsLifetimeStream,
-UserInsightsFollowersStream,
-UserInsightsWeeklyStream
 ]
 
 BASE_URL = "https://graph.facebook.com/{ig_user_id}"
