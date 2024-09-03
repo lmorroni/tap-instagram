@@ -638,10 +638,16 @@ class StoryInsightsStream(InstagramStream):
                 ]
             else:  # media_product_type is "AD" or "FEED"
                 metrics = [
-                    "total_interactions",
-                    "impressions",
-                    "reach",
-                    "saved",
+                                  'impressions',
+                                  'reach',
+                                  'saved',
+                                  'video_views',
+                                  'follows',
+                                  'comments',
+                                  'likes',
+                                  'shares',
+                                  'profile_visits',
+                                  'total_interactions'
                 ]
                 if media_type == "VIDEO":
                     metrics.append("video_views")
@@ -654,6 +660,14 @@ class StoryInsightsStream(InstagramStream):
                 "saved",
                 "video_views",
             ]
+        elif media_type == "REELS":
+            return ['comments',
+                    'likes',
+                    'plays',
+                    'reach',
+                    'saved',
+                    'shares',
+                    'total_interactions']
         else:
             raise ValueError(
                 f"media_type from parent record must be one of IMAGE, VIDEO, CAROUSEL_ALBUM, got: {media_type}"
@@ -694,7 +708,7 @@ class StoryInsightsStream(InstagramStream):
                 "name": row["name"],
                 "period": row["period"],
                 "title": row["title"],
-                "id": row["id"],
+                "id": row["id"].split("/")[0],
                 "description": row["description"],
             }
             if "values" in row:
@@ -863,35 +877,26 @@ class UserInsightsStream(InstagramStream):
                         yield values
 
 
-class UserInsightsLifetimeStream(UserInsightsStream):
+class UserInsightsOnlineFollowersStream(UserInsightsStream):
     """Define custom stream."""
 
-    name = "user_insights_lifetime"
+    name = "user_insights_online_followers"
     metrics = ['id', 'username', 'name',
                'website', 'followers_count', 'follows_count',
                 'media_count']
     time_period = "lifetime"
 
 
-class MediaInsightsLifetimeStream(UserInsightsStream):
+class UserInsightsFollowersStream(UserInsightsStream):
      """Define custom stream."""
 
-     name = "media_insights_lifetime"
+     name = "user_insights_followers"
      metrics = ['timestamp',
                 'media_product_type',
                 'media_type',
                 'media_url',
                 'caption']
      time_period = "lifetime"
-
-
-class UserInsightsFollowersStream(UserInsightsStream):
-    """Define custom stream."""
-
-    name = "user_insights_followers"
-    metrics = ["follower_count"]
-    time_period = "day"
-    min_start_date = pendulum.now("UTC").subtract(days=30)
 
 
 class UserInsightsDailyStream(UserInsightsStream):
