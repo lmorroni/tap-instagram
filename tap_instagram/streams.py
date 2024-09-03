@@ -863,27 +863,26 @@ class UserInsightsStream(InstagramStream):
                         yield values
 
 
-class UserInsightsOnlineFollowersStream(UserInsightsStream):
+class UserInsightsLifetimeStream(UserInsightsStream):
     """Define custom stream."""
 
-    name = "user_insights_online_followers"
-    metrics = ["online_followers"]
+    name = "user_insights_lifetime"
+    metrics = ['id', 'username', 'name',
+               'website', 'followers_count', 'follows_count',
+                'media_count']
     time_period = "lifetime"
-    # TODO: Add note about online_followers seemingly only going back 30 days
 
 
-# class UserInsightsAudienceStream(UserInsightsStream):
-#     """Define custom stream."""
-#
-#     name = "user_insights_audience"
-#     metrics = [
-#         "audience_city",
-#         "audience_country",
-#         "audience_gender_age",
-#         "audience_locale",
-#     ]
-#     time_period = "lifetime"
-#     has_pagination = False
+class MediaInsightsLifetimeStream(UserInsightsStream):
+     """Define custom stream."""
+
+     name = "media_insights_lifetime"
+     metrics = ['timestamp',
+                'media_product_type',
+                'media_type',
+                'media_url',
+                'caption']
+     time_period = "lifetime"
 
 
 class UserInsightsFollowersStream(UserInsightsStream):
@@ -917,8 +916,11 @@ class UserInsightsWeeklyStream(UserInsightsStream):
 
     name = "user_insights_weekly"
     metrics = [
-        "impressions",
-        "reach",
+            'follower_count', 
+            'profile_views',
+            'impressions',
+            'reach', 'email_contacts', 'get_directions_clicks',
+            'text_message_clicks', 'phone_call_clicks', 'website_clicks'
     ]
     time_period = "week"
 
