@@ -10,7 +10,7 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
-BASE_URL = "https://graph.facebook.com"
+BASE_URL = "https://graph.facebook.com/v20.0"
 
 
 class InstagramStream(RESTStream):
