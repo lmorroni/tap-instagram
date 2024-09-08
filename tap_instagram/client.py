@@ -81,7 +81,7 @@ class InstagramStream(RESTStream):
                 f"{response.reason} - {response.json()['error']['message']}"
                 f" for path: {self.path}"
             )
-            raise FatalAPIError(msg)
+#            raise FatalAPIError(msg)
 
         elif 500 <= response.status_code < 600:
             msg = (
