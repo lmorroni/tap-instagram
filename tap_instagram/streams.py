@@ -465,6 +465,9 @@ class MediaInsightsStream(InstagramStream):
                 ]
                 if media_type == "VIDEO":
                     metrics.append("video_views")
+                else:
+                    metrics.append("total_interactions")
+                    metrics.append("impressions")
                 return metrics
         elif media_type == "CAROUSEL_ALBUM":
             return [
