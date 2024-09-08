@@ -461,10 +461,7 @@ class MediaInsightsStream(InstagramStream):
             else:  # media_product_type is "AD" or "FEED"
                 metrics = [
                     'saved',
-                    'reach',
-                    'saved',
-                    'follows',
-                    'profile_visits'
+                    'reach'
                 ]
                 if media_type == "VIDEO":
                     metrics.append("video_views")
