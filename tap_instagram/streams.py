@@ -526,7 +526,8 @@ class MediaInsightsStream(InstagramStream):
                 "error_user_title"
         ) == "Media posted before business account conversion" or "(#10) Not enough viewers for the media to show insights" in str(
             resp_json.get("error", {}).get("message")
-        ):
+        ) or resp_json.get("data") is None:
+            self.logger.warning(f"Skipping: {response.text}")
             return
         for row in resp_json["data"]:
             base_item = {
@@ -689,7 +690,8 @@ class StoryInsightsStream(InstagramStream):
                 "error_user_title"
         ) == "Media posted before business account conversion" or "(#10) Not enough viewers for the media to show insights" in str(
             resp_json.get("error", {}).get("message")
-        ):
+        ) or resp_json.get("data") is None:
+            self.logger.warning(f"Skipping: {response.text}")
             return
 
         for row in resp_json["data"]:
