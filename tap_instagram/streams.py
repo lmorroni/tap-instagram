@@ -516,6 +516,12 @@ class MediaInsightsStream(InstagramStream):
         resp_json = response.json()
         # Handle the specific case where FB returns error because media was posted before business acct creation
         # TODO: Refactor to raise a specific error in validate_response and handle that instead
+        if response.json() is None:
+            resp_json = {
+                "error": response.text
+            }
+            self.logger.warning(f"Skipping: {response.text}")
+            return
         if resp_json.get("error", {}).get(
                 "error_user_title"
         ) == "Media posted before business account conversion" or "(#10) Not enough viewers for the media to show insights" in str(
@@ -673,6 +679,12 @@ class StoryInsightsStream(InstagramStream):
         resp_json = response.json()
         # Handle the specific case where FB returns error because media was posted before business acct creation
         # TODO: Refactor to raise a specific error in validate_response and handle that instead
+        if response.json() is None:
+            resp_json = {
+                "error": response.text
+            }
+            self.logger.warning(f"Skipping: {response.text}")
+            return
         if resp_json.get("error", {}).get(
                 "error_user_title"
         ) == "Media posted before business account conversion" or "(#10) Not enough viewers for the media to show insights" in str(
