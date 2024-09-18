@@ -684,11 +684,11 @@ class StoryInsightsStream(InstagramStream):
             }
             self.logger.warning(f"Skipping: {response.text}")
             return
-        if resp_json.get("error", {}).get(
+        if response.json().get("error", {}).get(
                 "error_user_title"
         ) == "Media posted before business account conversion" or "(#10) Not enough viewers for the media to show insights" in str(
-            resp_json.get("error", {}).get("message")
-        ) or resp_json.get("data") is None:
+            response.json().get("error", {}).get("message")
+        ) or response.json().get("data") is None:
             self.logger.warning(f"Skipping: {response.text}")
             return
         super().validate_response(response)
