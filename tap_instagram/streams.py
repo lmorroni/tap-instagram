@@ -458,49 +458,45 @@ class MediaInsightsStream(InstagramStream):
     @staticmethod
     def _metrics_for_media_type(media_type: str, media_product_type: str):
         # TODO: Define types for these function args
-        if media_type in ("IMAGE", "VIDEO"):
-            if media_product_type == "STORY":
-                return [
-                    # "exits",
-                    "impressions",
-                    "reach",
-                    "replies",
-                    # "taps_forward",
-                    # "taps_back",
-                ]
-            else:  # media_product_type is "AD" or "FEED"
-                metrics = [
-                    'saved',
-                    'reach'
-                ]
-                if media_type == "VIDEO":
-                    metrics.append("video_views")
-                else:
-                    metrics.append("total_interactions")
-                    metrics.append("impressions")
-                return metrics
-        elif media_type == "CAROUSEL_ALBUM":
+        if media_product_type == 'FEED' and media_type in ['VIDEO', 'IMAGE']:
+            return ['total_interactions',
+                                  # 'engagement', DEPRECATED
+                                  'impressions',
+                                  'reach',
+                                  'saved',
+                                  'video_views',
+                                  'follows',
+                                  'profile_visits']
+
+        elif media_type == 'CAROUSEL_ALBUM':
+            return ['total_interactions',
+                                      'impressions',
+                                      'reach',
+                                      'saved',
+                                      'video_views']
+
+        elif media_product_type == 'REELS':
+            return ['comments',
+                                  'likes',
+                                  'plays',
+                                  'reach',
+                                  'saved',
+                                  'shares',
+                                  'total_interactions']
+
+        elif media_product_type == 'STORY':
             return [
-                "total_interactions",
+                # "exits",
                 "impressions",
                 "reach",
-                "saved",
-                "video_views",
+                "replies",
+                # "taps_forward",
+                # "taps_back",
             ]
-        elif media_type == "REELS":
-            return ['comments',
-                    'likes',
-                    'plays',
-                    'reach',
-                    'saved',
-                    'shares',
-                    'total_interactions']
-
         else:
             raise ValueError(
                 f"media_type from parent record must be one of IMAGE, VIDEO, CAROUSEL_ALBUM, got: {media_type}"
             )
-
 
     def get_url_params(
             self, context: Optional[dict], next_page_token: Optional[Any]
@@ -539,7 +535,7 @@ class MediaInsightsStream(InstagramStream):
         ) or resp_json.get("data") is None:
             self.logger.warning(f"Skipping: {response.text}")
             return
-            
+
         for row in resp_json["data"]:
             base_item = {
                 "name": row["name"],
