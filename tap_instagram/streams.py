@@ -109,6 +109,11 @@ class MediaStream(InstagramStream):
             description="Instagram media ID.",
         ),
         th.Property(
+            "user_id",
+            th.StringType,
+            description="Instagram user ID.",
+        ),
+        th.Property(
             "caption",
             th.StringType,
             description="Caption. Excludes album children. @ symbol excluded unless the app user can perform "
@@ -211,7 +216,7 @@ class MediaStream(InstagramStream):
 
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
         return {
-            # "user_id": context["user_id"],
+            "user_id": context["user_id"],
             "media_id": record["id"],
             "media_type": record["media_type"],
             # media_product_type not present for carousel children media
@@ -263,6 +268,11 @@ class StoriesStream(InstagramStream):
             "ig_id",
             th.StringType,
             description="Instagram media ID.",
+        ),
+        th.Property(
+            "user_id",
+            th.StringType,
+            description="Instagram user ID.",
         ),
         th.Property(
             "caption",
@@ -357,7 +367,7 @@ class StoriesStream(InstagramStream):
 
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
         return {
-            # "user_id": context["user_id"],
+            "user_id": context["user_id"],
             "media_id": record["id"],
             "media_type": record["media_type"],
             # media_product_type not present for carousel children media
@@ -516,18 +526,11 @@ class MediaInsightsStream(InstagramStream):
         resp_json = response.json()
         # Handle the specific case where FB returns error because media was posted before business acct creation
         # TODO: Refactor to raise a specific error in validate_response and handle that instead
-        if response.json() is None:
-            resp_json = {
-                "error": response.text
-            }
-            self.logger.warning(f"Skipping: {response.text}")
-            return
         if resp_json.get("error", {}).get(
                 "error_user_title"
         ) == "Media posted before business account conversion" or "(#10) Not enough viewers for the media to show insights" in str(
             resp_json.get("error", {}).get("message")
-        ) or resp_json.get("data") is None:
-            self.logger.warning(f"Skipping: {response.text}")
+        ):
             return
         for row in resp_json["data"]:
             base_item = {
@@ -680,18 +683,11 @@ class StoryInsightsStream(InstagramStream):
         resp_json = response.json()
         # Handle the specific case where FB returns error because media was posted before business acct creation
         # TODO: Refactor to raise a specific error in validate_response and handle that instead
-        if response.json() is None:
-            resp_json = {
-                "error": response.text
-            }
-            self.logger.warning(f"Skipping: {response.text}")
-            return
         if resp_json.get("error", {}).get(
                 "error_user_title"
         ) == "Media posted before business account conversion" or "(#10) Not enough viewers for the media to show insights" in str(
             resp_json.get("error", {}).get("message")
-        ) or resp_json.get("data") is None:
-            self.logger.warning(f"Skipping: {response.text}")
+        ):
             return
 
         for row in resp_json["data"]:
