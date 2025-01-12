@@ -464,7 +464,7 @@ class MediaInsightsStream(InstagramStream):
                                   'impressions',
                                   'reach',
                                   'saved',
-                                  'video_views',
+                                 # 'video_views',
                                   'follows',
                                   'profile_visits']
 
@@ -473,7 +473,8 @@ class MediaInsightsStream(InstagramStream):
                                       'impressions',
                                       'reach',
                                       'saved',
-                                      'video_views']
+                                      #'video_views'
+                   ]
 
         elif media_product_type == 'REELS':
             return ['comments',
@@ -866,14 +867,14 @@ class UserInsightsDailyStream(UserInsightsStream):
 
     name = "user_insights_daily"
     metrics = [
-        "email_contacts",
-        "get_directions_clicks",
+       # "email_contacts",
+        #"get_directions_clicks",
         "impressions",
-        "phone_call_clicks",
-        "profile_views",
+        #"phone_call_clicks",
+       # "profile_views",
         "reach",
-        "text_message_clicks",
-        "website_clicks",
+        #"text_message_clicks",
+        #"website_clicks",
     ]
     time_period = "day"
 
@@ -884,10 +885,10 @@ class UserInsightsWeeklyStream(UserInsightsStream):
     name = "instagram_account_stat"
     metrics = [
         'follower_count',
-        'profile_views',
+        #'profile_views',
         'impressions',
-        'reach', 'email_contacts', 'get_directions_clicks',
-        'text_message_clicks', 'phone_call_clicks', 'website_clicks'
+        'reach', #'email_contacts', 'get_directions_clicks',
+        #'text_message_clicks', 'phone_call_clicks', 'website_clicks'
     ]
     time_period = "day"
 
