@@ -461,7 +461,7 @@ class MediaInsightsStream(InstagramStream):
         if media_product_type == 'FEED' and media_type in ['VIDEO', 'IMAGE']:
             return ['total_interactions',
                                   # 'engagement', DEPRECATED
-                                  'impressions',
+                                  #'impressions',
                                   'reach',
                                   'saved',
                                  # 'video_views',
@@ -470,7 +470,7 @@ class MediaInsightsStream(InstagramStream):
 
         elif media_type == 'CAROUSEL_ALBUM':
             return ['total_interactions',
-                                      'impressions',
+                                      #'impressions',
                                       'reach',
                                       'saved',
                                       #'video_views'
@@ -488,7 +488,7 @@ class MediaInsightsStream(InstagramStream):
         elif media_product_type == 'STORY':
             return [
                 # "exits",
-                "impressions",
+               # "impressions",
                 "reach",
                 "replies",
                 # "taps_forward",
@@ -620,7 +620,7 @@ class StoryInsightsStream(InstagramStream):
             if media_product_type == "STORY":
                 return [
                     # "exits",
-                    "impressions",
+                    #"impressions",
                     "reach",
                     "replies",
                     # "taps_forward",
@@ -628,7 +628,7 @@ class StoryInsightsStream(InstagramStream):
                 ]
             else:  # media_product_type is "AD" or "FEED"
                 metrics = [
-                    'impressions',
+                    #'impressions',
                     'reach',
                     'saved',
                     'video_views',
@@ -645,7 +645,7 @@ class StoryInsightsStream(InstagramStream):
         elif media_type == "CAROUSEL_ALBUM":
             return [
                 "total_interactions",
-                "impressions",
+                #"impressions",
                 "reach",
                 "saved",
                 "video_views",
@@ -869,7 +869,7 @@ class UserInsightsDailyStream(UserInsightsStream):
     metrics = [
        # "email_contacts",
         #"get_directions_clicks",
-        "impressions",
+       # "impressions",
         #"phone_call_clicks",
        # "profile_views",
         "reach",
@@ -886,7 +886,7 @@ class UserInsightsWeeklyStream(UserInsightsStream):
     metrics = [
         'follower_count',
         #'profile_views',
-        'impressions',
+        #'impressions',
         'reach', #'email_contacts', 'get_directions_clicks',
         #'text_message_clicks', 'phone_call_clicks', 'website_clicks'
     ]
@@ -898,7 +898,7 @@ class UserInsights28DayStream(UserInsightsStream):
 
     name = "instagram_account_stat_"
     metrics = [
-        "impressions",
+        #"impressions",
         "reach",
     ]
     time_period = "days_28"
