@@ -779,7 +779,7 @@ class UserInsightsStream(InstagramStream):
             min_since: Min datetime for "since" parameter. Defaults to 2 years ago, max historical data
                        supported for Facebook metrics.
             max_until: Max datetime for which data is available. Defaults to a day ago.
-            max_time_window: Maximum duration (as a "tiemdelta") between "since" and "until". Default to
+            max_time_window: Maximum duration (as a "timedelta") between "since" and "until". Default to
                              30 days, max window supported by Facebook
 
         Returns: DateTime objects for "since" and "until"
@@ -819,6 +819,19 @@ class UserInsightsStream(InstagramStream):
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         resp_json = response.json()
+
+        # Handle the specific case where FB returns error responses
+        # Check for various error conditions and log them appropriately
+        if resp_json.get("error"):
+            error_msg = resp_json.get("error", {}).get("message", "Unknown error")
+            self.logger.warning(f"Skipping user insights due to API error: {error_msg}")
+            return
+
+        # Check if data field is missing or None
+        if not resp_json.get("data"):
+            self.logger.warning(f"Skipping user insights: No data returned from API")
+            return
+
         for row in resp_json["data"]:
             base_item = {
                 "name": row["name"],
@@ -827,26 +840,53 @@ class UserInsightsStream(InstagramStream):
 
             if "values" in row:
                 for values in row["values"]:
-                    item = {
-                        "value": values["value"],
-                        "date": pendulum.parse(values["end_time"]).format(
-                            "YYYY-MM-DD"
-                        ),
-                        "end_time": pendulum.parse(values["end_time"]).format(
-                            "YYYY-MM-DD HH:mm:ss"
-                        ),
-                    }
-                    item.update(base_item)
-                    yield item
+                    # Special handling for online_followers which returns hourly JSON data
+                    if row["name"] == "online_followers" and isinstance(values["value"], dict):
+                        # Convert hourly data to peak online followers for the day
+                        # online_followers shows how many followers were online each hour
+                        # Taking the max gives us the peak online followers for that day
+                        try:
+                            hourly_values = [int(v) for v in values["value"].values() if str(v).isdigit()]
+                            if hourly_values:
+                                peak_value = max(hourly_values)
+                            else:
+                                peak_value = 0
+                            item = {
+                                "value": peak_value,
+                                "date": pendulum.parse(values["end_time"]).format(
+                                    "YYYY-MM-DD"
+                                ),
+                                "end_time": pendulum.parse(values["end_time"]).format(
+                                    "YYYY-MM-DD HH:mm:ss"
+                                ),
+                            }
+                            item.update(base_item)
+                            yield item
+                        except (ValueError, TypeError) as e:
+                            self.logger.warning(f"Could not parse online_followers hourly data: {e}")
+                            continue
+                    else:
+                        # Normal handling for other metrics
+                        item = {
+                            "value": values["value"],
+                            "date": pendulum.parse(values["end_time"]).format(
+                                "YYYY-MM-DD"
+                            ),
+                            "end_time": pendulum.parse(values["end_time"]).format(
+                                "YYYY-MM-DD HH:mm:ss"
+                            ),
+                        }
+                        item.update(base_item)
+                        yield item
 
 
 class UserInsightsOnlineFollowersStream(UserInsightsStream):
     """Define custom stream."""
 
     name = "user_insights_online_followers"
-    metrics = ['id', 'username', 'name',
-               'website', 'followers_count', 'follows_count',
-               'media_count']
+    metrics = [
+        "online_followers",
+    ]
     time_period = "lifetime"
 
 
@@ -854,12 +894,10 @@ class UserInsightsFollowersStream(UserInsightsStream):
     """Define custom stream."""
 
     name = "user_insights_followers"
-    metrics = ['timestamp',
-               'media_product_type',
-               'media_type',
-               'media_url',
-               'caption']
-    time_period = "lifetime"
+    metrics = [
+        "follower_count",
+    ]
+    time_period = "day"
 
 
 class UserInsightsDailyStream(UserInsightsStream):
